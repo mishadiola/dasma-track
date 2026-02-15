@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import Logo from '../../components/Logo';
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -107,10 +108,7 @@ const Signup = () => {
         <div className="signup-page">
             <div className="signup-page__content">
                 <div className="signup-page__header">
-                    <div className="signup-page__logo-placeholder">
-                        <img src="/src/assets/images/logo-placeholder.png" alt="City Health Office Logo" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block' }} />
-                        <div style={{ display: 'none', width: '60px', height: '60px', background: 'white', borderRadius: '50%', margin: '0 auto' }}></div>
-                    </div>
+                    <Logo variant="signup" />
                     <h1 className="signup-page__title">City Health Office 3</h1>
                     <h2 className="signup-page__subtitle">Patient & Resource Management System</h2>
                 </div>

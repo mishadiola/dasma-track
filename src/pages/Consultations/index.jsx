@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
     Search, Filter, Plus, Calendar, User, Edit, Archive,
     ChevronLeft, ChevronRight, X, Save, FileText, Stethoscope,
-    Clock, AlertCircle, ChevronDown
+    Clock, AlertCircle, ChevronDown, ChevronUp, RotateCcw
 } from 'lucide-react';
+import { useRef, useEffect } from 'react';
 
 // Predefined consultation types
 const CONSULTATION_TYPES = [
@@ -72,7 +73,21 @@ const Consultations = () => {
     const [filterDate, setFilterDate] = useState('');
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
     const itemsPerPage = 10;
+
+    const filterRef = useRef(null);
+
+    // Close filters on click outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (filterRef.current && !filterRef.current.contains(event.target)) {
+                setShowFilterDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     // Modal states
     const [isNewConsultationModalOpen, setIsNewConsultationModalOpen] = useState(false);
@@ -140,11 +155,38 @@ const Consultations = () => {
         return matchesSearch && matchesDoctor && matchesType && matchesDate;
     });
 
+    // Sorting logic (3-state: asc -> desc -> reset)
+    const sortedConsultations = [...filteredConsultations].sort((a, b) => {
+        if (!sortConfig.direction) return 0; // Default order
+
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        // Handle case-insensitive patient name sorting
+        if (sortConfig.key === 'patientName') {
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+        }
+
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    const requestSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key) {
+            if (sortConfig.direction === 'asc') direction = 'desc';
+            else if (sortConfig.direction === 'desc') direction = null;
+        }
+        setSortConfig({ key, direction });
+    };
+
     // Pagination
-    const totalPages = Math.ceil(filteredConsultations.length / itemsPerPage);
+    const totalPages = Math.ceil(sortedConsultations.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentConsultations = filteredConsultations.slice(indexOfFirstItem, indexOfLastItem);
+    const currentConsultations = sortedConsultations.slice(indexOfFirstItem, indexOfLastItem);
 
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -339,7 +381,7 @@ const Consultations = () => {
                     <ChevronDown className="select-icon" size={18} />
                 </div>
 
-                <div className="filter-container">
+                <div className="filter-container" ref={filterRef}>
                     <button
                         className={`btn-filter ${showFilterDropdown ? 'active' : ''}`}
                         onClick={() => setShowFilterDropdown(!showFilterDropdown)}
@@ -348,7 +390,7 @@ const Consultations = () => {
                         More Filters
                     </button>
                     {showFilterDropdown && (
-                        <div className="filter-dropdown">
+                        <div className="filter-dropdown dropdown-anim">
                             <div className="filter-option">
                                 <label>Doctor</label>
                                 <select value={filterDoctor} onChange={(e) => setFilterDoctor(e.target.value)}>
@@ -361,15 +403,45 @@ const Consultations = () => {
                         </div>
                     )}
                 </div>
+
+                <button
+                    className="btn-clear-minimal"
+                    onClick={clearFilters}
+                    disabled={!(searchTerm || filterDoctor || filterConsultationType || filterDate)}
+                >
+                    <RotateCcw size={16} />
+                    <span>Clear Filters</span>
+                </button>
             </div>
 
-            {/* Summary */}
-            <div className="consultations-summary">
-                Showing {currentConsultations.length} of {filteredConsultations.length} consultations
-                {(searchTerm || filterDoctor || filterConsultationType || filterDate) && (
-                    <button className="btn-clear-filters" onClick={clearFilters}>
-                        Clear Filters
-                    </button>
+            {/* Summary & Top Pagination */}
+            <div className="table-controls-top">
+                <div className="consultations-summary-compact">
+                    Showing <strong>{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, sortedConsultations.length)}</strong> of <strong>{sortedConsultations.length}</strong> consultations
+                </div>
+
+                {totalPages > 1 && (
+                    <div className="pagination-top">
+                        <div className="pagination-info-mini">
+                            Page {currentPage} of {totalPages}
+                        </div>
+                        <div className="pagination-btns-mini">
+                            <button
+                                className="page-btn-mini"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                <ChevronLeft size={16} />
+                            </button>
+                            <button
+                                className="page-btn-mini"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    </div>
                 )}
             </div>
 
@@ -379,8 +451,22 @@ const Consultations = () => {
                     <table className="consultations-table">
                         <thead>
                             <tr>
-                                <th>Patient Name</th>
-                                <th>Date</th>
+                                <th className="sortable" onClick={() => requestSort('patientName')}>
+                                    <div className="th-content">
+                                        Patient Name
+                                        <div className={`sort-icons ${sortConfig.key === 'patientName' ? 'active-sort' : ''}`}>
+                                            {sortConfig.key === 'patientName' && sortConfig.direction === 'desc' ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                                        </div>
+                                    </div>
+                                </th>
+                                <th className="sortable" onClick={() => requestSort('date')}>
+                                    <div className="th-content">
+                                        Date
+                                        <div className={`sort-icons ${sortConfig.key === 'date' ? 'active-sort' : ''}`}>
+                                            {sortConfig.key === 'date' && sortConfig.direction === 'desc' ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                                        </div>
+                                    </div>
+                                </th>
                                 <th>Doctor</th>
                                 <th>Type</th>
                                 <th>Notes</th>
@@ -446,30 +532,7 @@ const Consultations = () => {
                 </div>
             )}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="pagination-footer">
-                    <div className="pagination-controls">
-                        <button
-                            className="page-btn"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                        >
-                            <ChevronLeft size={18} />
-                        </button>
-                        <span className="page-info">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button
-                            className="page-btn"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                        >
-                            <ChevronRight size={18} />
-                        </button>
-                    </div>
-                </div>
-            )}
+            {/* Legacy pagination removed (moved to top) */}
 
             {/* New Consultation Modal */}
             {isNewConsultationModalOpen && (
