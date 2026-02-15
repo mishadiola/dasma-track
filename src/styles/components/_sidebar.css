@@ -1,0 +1,133 @@
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #022c22;
+    /* Very dark green */
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar__header {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar__logo img,
+.sidebar__logo div {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.sidebar__title h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.sidebar__title p {
+    font-size: 0.75rem;
+    color: #86efac;
+    /* Light green accent */
+    margin: 0;
+    opacity: 0.8;
+}
+
+.sidebar__nav {
+    flex: 1;
+    padding: 1.5rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    color: #d1d5db;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.sidebar__link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    transform: translateX(3px);
+}
+
+.sidebar__link.active {
+    background-color: #dcfce7;
+    /* Very light green */
+    color: #064e3b;
+    /* Dark green text */
+    font-weight: 700;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar__footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar__link.logout:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    /* Red tint */
+    color: #fca5a5;
+    /* Light red */
+}
+
+/* Dashboard Layout */
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.dashboard-content {
+    flex: 1;
+    margin-left: 250px;
+    /* Width of sidebar */
+    padding: 2rem;
+    background-color: #f3f4f6;
+    /* Light gray background for content */
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+    }
+
+    .sidebar__title,
+    .sidebar__link span {
+        display: none;
+    }
+
+    .sidebar__logo {
+        margin: 0 auto;
+    }
+
+    .sidebar__nav a {
+        justify-content: center;
+    }
+
+    .dashboard-content {
+        margin-left: 70px;
+    }
+}

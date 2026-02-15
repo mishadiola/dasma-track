@@ -1,0 +1,23 @@
+/* Base Styles */
+@import './base/_reset.css';
+@import './base/_variables.css';
+@import './base/_typography.css';
+
+/* Layout Styles */
+@import './layout/_header.css';
+
+/* Component Styles */
+@import './components/_button.css';
+@import './components/_navbar.css';
+
+/* Page Styles */
+@import './pages/_home.css';
+@import './pages/_login.css';
+@import './pages/_signup.css';
+@import './components/_sidebar.css';
+@import './pages/_dashboard.css';
+@import './pages/_patients.css';
+@import './pages/_new-patient.css';
+@import './pages/_patient-profile.css';
+@import './pages/_consultations.css';
+@import './pages/_resources.css';
