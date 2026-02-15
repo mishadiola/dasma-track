@@ -11,10 +11,12 @@ import PatientProfile from './pages/PatientProfile';
 import Consultations from './pages/Consultations';
 import Resources from './pages/Resources';
 import DashboardLayout from './layouts/DashboardLayout';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
