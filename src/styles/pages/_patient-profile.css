@@ -3,6 +3,7 @@
     padding: 2rem;
     max-width: 1400px;
     margin: 0 auto;
+    color: var(--text-color);
 }
 
 /* Header */
@@ -18,19 +19,19 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: white;
-    border: 1px solid #d1d5db;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     padding: 0.75rem 1.25rem;
     border-radius: 0.5rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .btn-back:hover {
-    background-color: #f9fafb;
-    border-color: #9ca3af;
+    background-color: var(--table-row-hover);
+    border-color: var(--text-muted);
     transform: translateX(-3px);
 }
 
@@ -72,7 +73,7 @@
 }
 
 .btn-archive {
-    background: white;
+    background: var(--card-bg);
     color: #dc2626;
     border: 2px solid #fca5a5;
 }
@@ -202,7 +203,7 @@
 }
 
 .stat-card {
-    background: white;
+    background: var(--card-bg);
     padding: 1.5rem;
     border-radius: 0.75rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -211,6 +212,7 @@
     gap: 1.5rem;
     transition: all 0.2s;
     animation: fadeIn 0.6s ease-out;
+    border: 1px solid var(--border-color);
 }
 
 .stat-card:hover {
@@ -247,7 +249,7 @@
 
 .stat-label {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--text-muted);
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
@@ -266,12 +268,13 @@
 }
 
 .info-section {
-    background: white;
+    background: var(--card-bg);
     border-radius: 0.75rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     animation: fadeIn 0.7s ease-out;
     transition: all 0.2s;
+    border: 1px solid var(--border-color);
 }
 
 .info-section:hover {
@@ -279,9 +282,9 @@
 }
 
 .section-header {
-    background: #f0fdf4;
+    background: var(--header-bg);
     padding: 1.25rem 1.5rem;
-    border-bottom: 2px solid #dcfce7;
+    border-bottom: 2px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -307,7 +310,7 @@
     align-items: flex-start;
     gap: 1rem;
     padding: 1rem 0;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .info-row:last-child {
@@ -315,7 +318,7 @@
 }
 
 .row-icon {
-    color: #6b7280;
+    color: var(--text-muted);
     flex-shrink: 0;
     margin-top: 0.25rem;
 }
@@ -323,7 +326,7 @@
 .info-label {
     display: block;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--text-muted);
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
@@ -331,7 +334,7 @@
 .info-value {
     display: block;
     font-size: 0.95rem;
-    color: #111827;
+    color: var(--text-color);
     font-weight: 500;
 }
 
@@ -342,7 +345,7 @@
 
 .medical-item {
     padding: 1.25rem;
-    background: #f9fafb;
+    background: var(--subcard-bg);
     border-radius: 0.5rem;
     margin-bottom: 1rem;
     border-left: 4px solid #064e3b;
@@ -350,7 +353,7 @@
 }
 
 .medical-item:hover {
-    background: #f3f4f6;
+    background: var(--table-row-hover);
     transform: translateX(5px);
 }
 
@@ -381,7 +384,7 @@
 
 .medical-value {
     font-size: 0.95rem;
-    color: #374151;
+    color: var(--text-color);
     line-height: 1.6;
 }
 
@@ -398,7 +401,7 @@
     display: flex;
     gap: 1.5rem;
     padding: 1.25rem;
-    background: #f9fafb;
+    background: var(--subcard-bg);
     border-radius: 0.5rem;
     margin-bottom: 1rem;
     border-left: 4px solid #0891b2;
@@ -406,7 +409,7 @@
 }
 
 .visit-item:hover {
-    background: #f3f4f6;
+    background: var(--table-row-hover);
     transform: translateX(5px);
 }
 
@@ -429,14 +432,14 @@
 
 .visit-doctor {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--text-muted);
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .visit-notes {
     font-size: 0.9rem;
-    color: #374151;
+    color: var(--text-color);
     line-height: 1.5;
     margin: 0;
 }
@@ -452,13 +455,13 @@
 }
 
 .archive-modal p {
-    color: #4b5563;
+    color: var(--text-color);
     margin-bottom: 0.75rem;
 }
 
 .modal-note {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--text-muted);
     font-style: italic;
 }
 
@@ -480,9 +483,9 @@
 }
 
 .btn-cancel {
-    background: white;
-    border: 1px solid #d1d5db;
-    color: #374151;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }
 
 .btn-cancel:hover {

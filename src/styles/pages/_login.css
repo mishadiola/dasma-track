@@ -81,7 +81,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.45);
+    background: var(--glass-overlay);
     backdrop-filter: blur(3px);
     z-index: 0;
     transition: background 0.5s ease;
@@ -120,7 +120,7 @@
     font-weight: 800;
     color: #0f3d0f;
     margin-bottom: 0.25rem;
-    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 4px var(--card-bg);
     letter-spacing: -0.5px;
 }
 
@@ -135,7 +135,7 @@
 
 /* Enhanced Glassmorphism Card */
 .login-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: var(--glass-bg);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     padding: 3rem 2.5rem;
@@ -145,9 +145,10 @@
         0 2px 4px -1px rgba(0, 0, 0, 0.06),
         0 20px 25px -5px rgba(0, 0, 0, 0.1),
         0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border-color);
     width: 100%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: var(--text-color);
 }
 
 .login-card:hover {
@@ -197,7 +198,7 @@
 .form-label {
     display: block;
     font-weight: 600;
-    color: #064e3b;
+    color: var(--text-color);
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
     transition: color 0.2s;
@@ -216,11 +217,11 @@
     padding: 0.875rem 1rem;
     font-size: 1rem;
     border: 2px solid transparent;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: var(--input-bg);
     border-radius: 0.75rem;
     outline: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #374151;
+    color: var(--input-text);
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
     font-family: 'Poppins', sans-serif;
 }
@@ -378,7 +379,7 @@
     margin-top: 1.5rem;
     text-align: center;
     font-size: 0.95rem;
-    color: #4b5563;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
@@ -427,7 +428,7 @@
 .login-card__footer p {
     font-size: 0.85rem;
     font-weight: 500;
-    color: #6b7280;
+    color: var(--text-muted);
     line-height: 1.5;
 }
 

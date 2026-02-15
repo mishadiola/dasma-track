@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import Home from './pages/Home';
 import About from './pages/About';
 import Login from './pages/Login';
@@ -15,63 +16,65 @@ import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/dashboard"
-          element={
-            <DashboardLayout>
-              <Dashboard />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/patients"
-          element={
-            <DashboardLayout>
-              <Patients />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/patients/new"
-          element={
-            <DashboardLayout>
-              <NewPatient />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/patients/:id"
-          element={
-            <DashboardLayout>
-              <PatientProfile />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/consultations"
-          element={
-            <DashboardLayout>
-              <Consultations />
-            </DashboardLayout>
-          }
-        />
-        <Route
-          path="/resources"
-          element={
-            <DashboardLayout>
-              <Resources />
-            </DashboardLayout>
-          }
-        />
-        <Route path="/home" element={<Home />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/dashboard"
+            element={
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/patients"
+            element={
+              <DashboardLayout>
+                <Patients />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/patients/new"
+            element={
+              <DashboardLayout>
+                <NewPatient />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/patients/:id"
+            element={
+              <DashboardLayout>
+                <PatientProfile />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/consultations"
+            element={
+              <DashboardLayout>
+                <Consultations />
+              </DashboardLayout>
+            }
+          />
+          <Route
+            path="/resources"
+            element={
+              <DashboardLayout>
+                <Resources />
+              </DashboardLayout>
+            }
+          />
+          <Route path="/home" element={<Home />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

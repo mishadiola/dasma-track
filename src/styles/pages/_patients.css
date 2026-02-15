@@ -1,12 +1,14 @@
 .patients-page {
     animation: fadeInUp 0.5s ease-out;
-    background-color: white;
+    background-color: var(--card-bg);
     padding: 2rem;
     border-radius: 1rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     min-height: 85vh;
     display: flex;
     flex-direction: column;
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Header */
@@ -44,7 +46,7 @@
 }
 
 .header-title p {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 0.875rem;
     margin: 0;
 }
@@ -92,12 +94,12 @@
 .filters-bar input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 0.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     outline: none;
     font-size: 0.9rem;
-    background: white;
-    color: #374151;
+    background: var(--input-bg);
+    color: var(--input-text);
 }
 
 .filters-bar input::placeholder {
@@ -159,9 +161,9 @@
     position: absolute;
     top: 110%;
     right: 0;
-    background: white;
+    background: var(--card-bg);
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     padding: 1.25rem;
     z-index: 100;
@@ -197,26 +199,33 @@
     display: block;
     font-size: 0.8rem;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--text-color);
     margin-bottom: 0.25rem;
 }
 
 .filter-option select {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
     border-radius: 0.375rem;
     font-size: 0.9rem;
+    background: var(--input-bg);
+    color: var(--input-text);
 }
 
+
+.patients-summary {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
 
 .btn-clear-minimal {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     background: transparent;
-    border: 1px solid #fed7aa;
-    color: #9a3412;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     font-size: 0.85rem;
@@ -226,16 +235,16 @@
 }
 
 .btn-clear-minimal:hover:not(:disabled) {
-    background-color: #ffedd5;
-    border-color: #fb923c;
+    background-color: var(--button-hover-bg);
+    border-color: var(--button-hover-border);
     transform: translateY(-1px);
 }
 
 .btn-clear-minimal:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    border-color: #e5e7eb;
-    color: #9ca3af;
+    border-color: var(--border-color);
+    color: var(--text-muted);
 }
 
 .table-controls-top {
@@ -248,27 +257,27 @@
 
 .patients-summary-compact {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--text-muted);
 }
 
 .patients-summary-compact strong {
-    color: #111827;
+    color: var(--text-color);
 }
 
 .pagination-top {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: #f9fafb;
+    background: var(--subcard-bg);
     padding: 0.5rem 1rem;
     border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
 }
 
 .pagination-info-mini {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--text-color);
 }
 
 .pagination-btns-mini {
@@ -282,17 +291,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #d1d5db;
-    background: white;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
     border-radius: 6px;
-    color: #374151;
+    color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .page-btn-mini:hover:not(:disabled) {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+    background: var(--table-row-hover);
+    border-color: var(--text-muted);
 }
 
 .page-btn-mini:disabled {
@@ -310,11 +319,12 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+    color: var(--text-color);
 }
 
 .patients-table thead {
-    background-color: #022c22;
-    color: white;
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
 }
 
 .patients-table th {
@@ -347,7 +357,7 @@
 }
 
 .patients-table tbody tr {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--table-border);
     transition: background-color 0.2s;
 }
 
@@ -356,18 +366,17 @@
 }
 
 .patients-table tbody tr:hover {
-    background-color: #f0fdf4;
-    /* Green 50 */
+    background-color: var(--table-row-hover);
 }
 
 .patients-table td {
     padding: 1rem;
-    color: #4b5563;
+    color: var(--text-color);
     white-space: nowrap;
 }
 
 .text-dark {
-    color: #111827 !important;
+    color: var(--text-color) !important;
 }
 
 .font-bold {
@@ -389,9 +398,8 @@
 }
 
 .status-badge.inactive {
-    background-color: #374151;
-    /* Dark Gray */
-    color: #f3f4f6;
+    background-color: var(--border-color);
+    color: var(--text-muted);
 }
 
 /* Actions */
@@ -419,8 +427,8 @@
 .shadow-soft {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
-    background: white;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
 }
 
 .interactive-table tbody tr {
@@ -428,7 +436,7 @@
 }
 
 .interactive-table tbody tr:hover {
-    background-color: #f0fdf4;
+    background-color: var(--table-row-hover);
 }
 
 .btn-edit {
@@ -472,7 +480,7 @@
     justify-content: center;
     padding: 3rem;
     text-align: center;
-    color: #6b7280;
+    color: var(--text-muted);
     animation: fadeIn 0.5s ease;
 }
 
@@ -483,13 +491,13 @@
 
 .btn-clear-filters {
     margin-top: 1rem;
-    background-color: white;
-    border: 1px solid #d1d5db;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;
     font-weight: 500;
-    color: #064e3b;
+    color: var(--text-color);
     transition: all 0.2s;
 }
 
@@ -515,7 +523,8 @@
 }
 
 .modal-content {
-    background: white;
+    background: var(--modal-bg);
+    color: var(--text-color);
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -571,7 +580,7 @@
 }
 
 .modal-header-modern {
-    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    background: var(--modal-header-bg);
     padding: 2.5rem 2rem 1.5rem;
     color: white;
     text-align: center;
@@ -617,11 +626,11 @@
 }
 
 .modal-body-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--bg-color);
 }
 
 .modal-body-scroll::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: var(--border-color);
     border-radius: 4px;
 }
 
@@ -638,7 +647,7 @@
     display: block;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-color);
     margin-bottom: 0.5rem;
 }
 
@@ -657,11 +666,13 @@
 .form-input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 0.75rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     font-size: 0.95rem;
     outline: none;
     transition: all 0.2s;
+    background: var(--input-bg);
+    color: var(--input-text);
 }
 
 .input-with-icon .form-input {
@@ -709,8 +720,8 @@
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    background-color: #f9fafb;
-    border-top: 1px solid #e5e7eb;
+    background-color: var(--modal-footer-bg);
+    border-top: 1px solid var(--border-color);
     flex-shrink: 0;
     /* Keep footer fixed size */
 }
@@ -721,14 +732,14 @@
     justify-content: flex-end;
     gap: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--border-color);
 }
 
 .btn-cancel-modern {
     padding: 0.75rem 1.5rem;
     border: none;
     background: transparent;
-    color: #6b7280;
+    color: var(--text-muted);
     font-weight: 600;
     cursor: pointer;
 }
