@@ -173,7 +173,7 @@ const Resources = () => {
                                     <td>{item.location}</td>
                                     <td>
                                         <span className={`stock-badge stock-${item.stockLevel}`}>
-                                            {item.stockLevel === 'critical' ? '⚠️ ' : ''}{item.stockLevel}
+                                            {item.stockLevel === 'critical' ? <AlertCircle size={14} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }} /> : ''}{item.stockLevel}
                                         </span>
                                     </td>
                                     <td>

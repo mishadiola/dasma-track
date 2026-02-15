@@ -18,7 +18,9 @@ import {
     User,
     Filter,
     CheckCircle2,
-    Calendar
+    Calendar,
+    Rocket,
+    Pin
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -203,7 +205,10 @@ const Dashboard = () => {
                 <div className="dashboard-right-col">
                     {/* Quick Actions Section */}
                     <section className="dashboard-section">
-                        <h2 className="section-title">🚀 Quick Actions</h2>
+                        <h2 className="section-title">
+                            <Rocket size={20} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--primary-color)' }} />
+                            Quick Actions
+                        </h2>
                         <div className="quick-actions-grid">
                             <button className="action-pill-btn tint-green" onClick={() => navigate('/patients/new')}>
                                 <Plus size={18} />
@@ -234,7 +239,10 @@ const Dashboard = () => {
 
                     {/* Recent Activity Section */}
                     <section className="dashboard-section recent-activity-section">
-                        <h2 className="section-title">📌 Recent Activity</h2>
+                        <h2 className="section-title">
+                            <Pin size={20} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--primary-color)' }} />
+                            Recent Activity
+                        </h2>
                         <div className="activity-feed">
                             {activityFeed.map(item => (
                                 <div
