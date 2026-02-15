@@ -1,6 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, Users, Stethoscope, Package, FileText, Settings, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import ThemeToggle from '../ThemeToggle';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -47,6 +48,7 @@ const Sidebar = () => {
             </nav>
 
             <div className="sidebar__footer">
+                <ThemeToggle />
                 <Link to="/" className="sidebar__link logout">
                     <LogOut size={20} />
                     <span>Logout</span>
