@@ -293,21 +293,21 @@
 
 .consultations-summary-compact {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--text-muted);
 }
 
 .consultations-summary-compact strong {
-    color: #111827;
+    color: var(--text-color);
 }
 
 .pagination-top {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: #f9fafb;
+    background: var(--subcard-bg);
     padding: 0.5rem 1rem;
     border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
 }
 
 .btn-clear-filters:hover {

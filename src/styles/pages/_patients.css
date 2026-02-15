@@ -257,27 +257,27 @@
 
 .patients-summary-compact {
     font-size: 0.9rem;
-    color: #6b7280;
+    color: var(--text-muted);
 }
 
 .patients-summary-compact strong {
-    color: #111827;
+    color: var(--text-color);
 }
 
 .pagination-top {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: #f9fafb;
+    background: var(--subcard-bg);
     padding: 0.5rem 1rem;
     border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border-color);
 }
 
 .pagination-info-mini {
     font-size: 0.85rem;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--text-color);
 }
 
 .pagination-btns-mini {
@@ -291,17 +291,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #d1d5db;
-    background: white;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
     border-radius: 6px;
-    color: #374151;
+    color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .page-btn-mini:hover:not(:disabled) {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+    background: var(--table-row-hover);
+    border-color: var(--text-muted);
 }
 
 .page-btn-mini:disabled {
@@ -398,9 +398,8 @@
 }
 
 .status-badge.inactive {
-    background-color: #374151;
-    /* Dark Gray */
-    color: #f3f4f6;
+    background-color: var(--border-color);
+    color: var(--text-muted);
 }
 
 /* Actions */
@@ -428,8 +427,8 @@
 .shadow-soft {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
     border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
-    background: white;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
 }
 
 .interactive-table tbody tr {
@@ -437,7 +436,7 @@
 }
 
 .interactive-table tbody tr:hover {
-    background-color: #f0fdf4;
+    background-color: var(--table-row-hover);
 }
 
 .btn-edit {
@@ -481,7 +480,7 @@
     justify-content: center;
     padding: 3rem;
     text-align: center;
-    color: #6b7280;
+    color: var(--text-muted);
     animation: fadeIn 0.5s ease;
 }
 
@@ -492,13 +491,13 @@
 
 .btn-clear-filters {
     margin-top: 1rem;
-    background-color: white;
-    border: 1px solid #d1d5db;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;
     font-weight: 500;
-    color: #064e3b;
+    color: var(--text-color);
     transition: all 0.2s;
 }
 
