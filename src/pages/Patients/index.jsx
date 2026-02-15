@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Plus, Calendar, Folder, Edit, ChevronLeft, ChevronRight, Archive, X, Save, Trash2, User, Phone, Clock } from 'lucide-react';
+import {
+    Search, Filter, Plus, Calendar, Folder, Edit, ChevronLeft, ChevronRight,
+    Archive, X, Save, Trash2, User, Phone, Clock, ChevronUp, ChevronDown, RotateCcw
+} from 'lucide-react';
 
 const generateMockPatients = () => {
     const specificNames = [
@@ -37,6 +40,10 @@ const generateMockPatients = () => {
         { name: 'Piolo Pascual', gender: 'Male' },
         { name: 'Regine Velasquez', gender: 'Female' },
         { name: 'Ogie Alcasid', gender: 'Male' },
+        { name: 'Arianne Bautista', gender: 'Female' },
+        { name: 'Alden Richards', gender: 'Male' },
+        { name: 'Maine Mendoza', gender: 'Female' },
+        { name: 'Julia Barretto', gender: 'Female' },
     ];
 
     const allNames = [...specificNames, ...filipinoNames];
@@ -69,6 +76,7 @@ const initialPatients = generateMockPatients();
 
 const Patients = () => {
     const navigate = useNavigate();
+    const filterRef = useRef(null);
     const [patients, setPatients] = useState(initialPatients);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
@@ -76,6 +84,7 @@ const Patients = () => {
     const [genderFilter, setGenderFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [showFilterPanel, setShowFilterPanel] = useState(false);
+    const [sortConfig, setSortConfig] = useState({ key: 'lastVisit', direction: 'desc' });
 
     // Modal States
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -84,27 +93,70 @@ const Patients = () => {
     const [editFormData, setEditFormData] = useState({});
     const [saveSuccess, setSaveSuccess] = useState(false);
 
-    const itemsPerPage = 10;
+    const itemsPerPage = 8;
+
+    // Click outside to close filter panel
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (filterRef.current && !filterRef.current.contains(event.target)) {
+                setShowFilterPanel(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const isFilterApplied = searchTerm !== '' || selectedDate !== '' || statusFilter !== 'all' || genderFilter !== 'all';
+
+    const clearFilters = () => {
+        setSearchTerm('');
+        setSelectedDate('');
+        setStatusFilter('all');
+        setGenderFilter('all');
+        setCurrentPage(1);
+    };
 
     // Filter Logic
     const filteredPatients = patients.filter(patient => {
         const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            patient.id.includes(searchTerm);
+            patient.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            patient.phone.includes(searchTerm);
 
         const matchesDate = selectedDate ? patient.lastVisit === selectedDate : true;
-
         const matchesStatus = statusFilter === 'all' ? true : patient.status.toLowerCase() === statusFilter;
-
         const matchesGender = genderFilter === 'all' ? true : patient.gender.toLowerCase() === genderFilter;
 
         return matchesSearch && matchesDate && matchesStatus && matchesGender;
     });
 
+    // Sorting Logic
+    const sortedPatients = [...filteredPatients].sort((a, b) => {
+        let valA = a[sortConfig.key];
+        let valB = b[sortConfig.key];
+
+        if (sortConfig.key === 'age') {
+            valA = parseInt(valA);
+            valB = parseInt(valB);
+        }
+
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    const requestSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
     // Pagination Logic
-    const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
+    const totalPages = Math.ceil(sortedPatients.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentPatients = filteredPatients.slice(indexOfFirstItem, indexOfLastItem);
+    const currentPatients = sortedPatients.slice(indexOfFirstItem, indexOfLastItem);
 
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
@@ -112,7 +164,12 @@ const Patients = () => {
         }
     };
 
-    // Edit Handlers
+    const renderSortIcon = (key) => {
+        if (sortConfig.key !== key) return <ChevronUp size={14} style={{ opacity: 0.3 }} />;
+        return sortConfig.direction === 'asc' ? <ChevronUp size={14} className="active-sort" /> : <ChevronDown size={14} className="active-sort" />;
+    };
+
+    // Handlers
     const openEditModal = (patient) => {
         setSelectedPatient(patient);
         setEditFormData({ ...patient });
@@ -125,7 +182,6 @@ const Patients = () => {
     };
 
     const saveEdit = () => {
-        // Simulate API delay and success
         setTimeout(() => {
             setPatients(prev => prev.map(p => p.id === selectedPatient.id ? editFormData : p));
             setSaveSuccess(true);
@@ -133,11 +189,10 @@ const Patients = () => {
                 setIsEditModalOpen(false);
                 setSelectedPatient(null);
                 setSaveSuccess(false);
-            }, 1000); // Close after 1s success message
+            }, 1000);
         }, 500);
     };
 
-    // Archive Handlers
     const openArchiveModal = (patient) => {
         setSelectedPatient(patient);
         setIsArchiveModalOpen(true);
@@ -147,18 +202,6 @@ const Patients = () => {
         setPatients(prev => prev.filter(p => p.id !== selectedPatient.id));
         setIsArchiveModalOpen(false);
         setSelectedPatient(null);
-        if (currentPatients.length === 1 && currentPage > 1) {
-            setCurrentPage(prev => prev - 1);
-        }
-    };
-
-    // Clear all filters
-    const clearFilters = () => {
-        setSearchTerm('');
-        setSelectedDate('');
-        setStatusFilter('all');
-        setGenderFilter('all');
-        setCurrentPage(1);
     };
 
     return (
@@ -202,13 +245,16 @@ const Patients = () => {
                     <Calendar size={18} className="calendar-icon" />
                 </div>
 
-                <div className="filter-container">
-                    <button className={`btn-filter ${showFilterPanel ? 'active' : ''}`} onClick={() => setShowFilterPanel(!showFilterPanel)}>
+                <div className="filter-container" ref={filterRef}>
+                    <button
+                        className={`btn-filter ${showFilterPanel ? 'active' : ''}`}
+                        onClick={() => setShowFilterPanel(!showFilterPanel)}
+                    >
                         <Filter size={18} />
                         <span>Filters</span>
                     </button>
                     {showFilterPanel && (
-                        <div className="filter-dropdown">
+                        <div className="filter-dropdown dropdown-anim">
                             <div className="filter-option">
                                 <label>Status</label>
                                 <select
@@ -234,27 +280,71 @@ const Patients = () => {
                         </div>
                     )}
                 </div>
+
+                <button
+                    className="btn-clear-minimal"
+                    onClick={clearFilters}
+                    disabled={!isFilterApplied}
+                >
+                    <RotateCcw size={16} />
+                    <span>Clear Filters</span>
+                </button>
             </div>
 
-            <div className="patients-summary">
-                {filteredPatients.length > 0 ? (
-                    <p>Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredPatients.length)} of {filteredPatients.length} patients</p>
-                ) : (
-                    <p>No records found</p>
+            {/* Top Pagination & Summary Controls */}
+            <div className="table-controls-top">
+                <div className="patients-summary-compact">
+                    {sortedPatients.length > 0 ? (
+                        <p>Showing <strong>{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, sortedPatients.length)}</strong> of <strong>{sortedPatients.length}</strong> patients</p>
+                    ) : (
+                        <p>No records found</p>
+                    )}
+                </div>
+
+                {totalPages > 1 && (
+                    <div className="pagination-top">
+                        <div className="pagination-info-mini">
+                            Page {currentPage} of {totalPages}
+                        </div>
+                        <div className="pagination-btns-mini">
+                            <button
+                                className="page-btn-mini"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                <ChevronLeft size={16} />
+                            </button>
+                            <button
+                                className="page-btn-mini"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <ChevronRight size={16} />
+                            </button>
+                        </div>
+                    </div>
                 )}
             </div>
 
-            <div className="table-container">
-                {filteredPatients.length > 0 ? (
-                    <table className="patients-table">
+            <div className="table-container shadow-soft">
+                {sortedPatients.length > 0 ? (
+                    <table className="patients-table interactive-table">
                         <thead>
                             <tr>
-                                <th>Patient ID</th>
-                                <th>Name</th>
-                                <th>Age</th>
+                                <th onClick={() => requestSort('id')} className="sortable">
+                                    <div className="th-content">ID {renderSortIcon('id')}</div>
+                                </th>
+                                <th onClick={() => requestSort('name')} className="sortable">
+                                    <div className="th-content">Name {renderSortIcon('name')}</div>
+                                </th>
+                                <th onClick={() => requestSort('age')} className="sortable">
+                                    <div className="th-content">Age {renderSortIcon('age')}</div>
+                                </th>
                                 <th>Gender</th>
                                 <th>Phone</th>
-                                <th>Last Visit</th>
+                                <th onClick={() => requestSort('lastVisit')} className="sortable">
+                                    <div className="th-content">Last Visit {renderSortIcon('lastVisit')}</div>
+                                </th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -290,8 +380,8 @@ const Patients = () => {
                 ) : (
                     <div className="empty-state">
                         <Folder size={48} className="empty-icon" />
-                        <h3>No records found</h3>
-                        <p>Try adjusting your filters or search query.</p>
+                        <h3>No records matching your search</h3>
+                        <p>Try adjusting your filters or clearing them to see all patients.</p>
                         <button className="btn-clear-filters" onClick={clearFilters}>
                             Clear Filters
                         </button>
@@ -299,29 +389,7 @@ const Patients = () => {
                 )}
             </div>
 
-            {totalPages > 1 && (
-                <div className="pagination-footer">
-                    <div className="pagination-controls">
-                        <button
-                            className="page-btn"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-                        <span className="page-info">Page {currentPage} of {totalPages}</span>
-                        <button
-                            className="page-btn"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                        >
-                            <ChevronRight size={20} />
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Modern Edit Modal */}
+            {/* Modal Components */}
             {isEditModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content modern-modal">
@@ -393,7 +461,7 @@ const Patients = () => {
                         <div className="modal-footer-modern">
                             {saveSuccess ? (
                                 <div className="success-message">
-                                    <span>Changes Saved!</span>
+                                    <span>Changes Saved Successfully!</span>
                                 </div>
                             ) : (
                                 <>
@@ -406,7 +474,6 @@ const Patients = () => {
                 </div>
             )}
 
-            {/* Archive Confirmation Modal */}
             {isArchiveModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content compact-modal">
@@ -416,7 +483,7 @@ const Patients = () => {
                         </div>
                         <div className="modal-body">
                             <p>Are you sure you want to archive the record for <strong>{selectedPatient?.name}</strong>?</p>
-                            <p className="text-muted">This action can be undone by an admin.</p>
+                            <p className="text-muted">This action can be undone by an administrator later.</p>
                         </div>
                         <div className="modal-footer-compact">
                             <button className="btn-cancel" onClick={() => setIsArchiveModalOpen(false)}>Cancel</button>
@@ -427,7 +494,6 @@ const Patients = () => {
                     </div>
                 </div>
             )}
-
         </div>
     );
 };

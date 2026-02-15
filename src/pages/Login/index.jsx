@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import Logo from '../../components/Logo';
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -63,10 +64,7 @@ const Login = () => {
         <div className="login-page">
             <div className="login-page__content">
                 <div className="login-page__header">
-                    <div className="login-page__logo-placeholder">
-                        <img src="/src/assets/images/logo-placeholder.png" alt="City Health Office Logo" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block' }} />
-                        <div style={{ display: 'none', width: '80px', height: '80px', background: 'white', borderRadius: '50%', margin: '0 auto' }}></div>
-                    </div>
+                    <Logo variant="login" />
                     <h1 className="login-page__title">Dasmariñas City Health Office 3</h1>
                     <h2 className="login-page__subtitle">Patient & Resource Management System</h2>
                 </div>

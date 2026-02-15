@@ -2,6 +2,7 @@ import React from 'react';
 import { LayoutDashboard, Users, Stethoscope, Package, FileText, Settings, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import ThemeToggle from '../ThemeToggle';
+import Logo from '../Logo';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -10,10 +11,7 @@ const Sidebar = () => {
     return (
         <div className="sidebar">
             <div className="sidebar__header">
-                <div className="sidebar__logo">
-                    <img src="/src/assets/images/logo-placeholder.png" alt="CHO 3 Logo" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block' }} />
-                    <div style={{ display: 'none', width: '40px', height: '40px', background: 'white', borderRadius: '50%', margin: '0 auto' }}></div>
-                </div>
+                <Logo variant="sidebar" />
                 <div className="sidebar__title">
                     <h2>CHO 3</h2>
                     <p>Health System</p>

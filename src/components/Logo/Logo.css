@@ -1,0 +1,46 @@
+.system-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.system-logo__image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Variant: Login / Signup */
+.system-logo--login,
+.system-logo--signup {
+    margin-bottom: 2rem;
+}
+
+.system-logo--login .system-logo__image,
+.system-logo--signup .system-logo__image {
+    width: 120px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+/* Variant: Sidebar */
+.system-logo--sidebar {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.system-logo--sidebar .system-logo__image {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+
+    .system-logo--login .system-logo__image,
+    .system-logo--signup .system-logo__image {
+        width: 100px;
+    }
+}
