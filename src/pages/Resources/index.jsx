@@ -1,369 +1,500 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
-    Package, Search, Plus, Edit, Archive, Trash2,
-    ChevronDown, ChevronUp, Download, Eye,
-    Activity, Database, LayoutPanelTop,
-    MoreHorizontal, Filter, Save, X, AlertCircle,
-    User, MapPin, Tag, Box, Info,
-    Stethoscope, FlaskConical, Droplets, Smile,
-    Pill, Truck, Monitor, BookOpen, Clock,
-    CheckCircle2, PlusCircle, MinusCircle, RefreshCcw
+    Package,
+    Stethoscope,
+    HardHat,
+    Smartphone,
+    ClipboardList,
+    History,
+    BarChart3,
+    Plus,
+    Search,
+    Filter,
+    AlertCircle,
+    CheckCircle2,
+    Calendar,
+    Settings,
+    User,
+    ArrowRight,
+    Bell,
+    Pin,
+    Image as ImageIcon,
+    Download,
+    FileText,
+    MoreVertical,
+    Trash2,
+    ArrowUpCircle,
+    CheckSquare,
+    Square,
+    Flag,
+    Star,
+    Wrench
 } from 'lucide-react';
-
-const DEPARTMENTS = [
-    { id: 'admin', name: 'Administration', color: '#6b7280', icon: Database },
-    { id: 'public_health', name: 'Public Health', color: '#059669', icon: Stethoscope },
-    { id: 'lab', name: 'Laboratory', color: '#3b82f6', icon: FlaskConical },
-    { id: 'pharmacy', name: 'Pharmacy', color: '#7c3aed', icon: Pill },
-    { id: 'sanitation', name: 'Sanitation / Environmental', color: '#0369a1', icon: Droplets },
-];
-
-const CATEGORIES = ['Equipment', 'Supplies', 'Software', 'Medicines', 'Furniture'];
-const STATUSES = ['Active', 'Inactive', 'Archived'];
-const LOCATIONS = ['Main Clinic', 'Storage Room A', 'Pharmacy Depot', 'Lab Area', 'Admin Office'];
-
-const generateMockResources = () => {
-    return [
-        { id: 1, name: 'First Aid Kit Premium', category: 'Supplies', status: 'Active', quantity: 15, lowStockBatch: 5, location: 'Main Clinic', loggedBy: 'Mish Diola', department: 'public_health', dateAdded: '2024-01-15' },
-        { id: 2, name: 'Professional Stethoscope', category: 'Equipment', status: 'Active', quantity: 4, lowStockBatch: 2, location: 'Main Clinic', loggedBy: 'Nurse Clara', department: 'public_health', dateAdded: '2024-01-20' },
-        { id: 3, name: 'Waste Bin Industrial', category: 'Equipment', status: 'Active', quantity: 20, lowStockBatch: 5, location: 'Main Clinic', loggedBy: 'Jane Tadeo', department: 'sanitation', dateAdded: '2024-02-05' },
-        { id: 4, name: 'Advanced Inventory Software', category: 'Software', status: 'Active', quantity: 1, lowStockBatch: 0, location: 'Admin Office', loggedBy: 'Naomi Magsino', department: 'admin', dateAdded: '2023-12-10' },
-        { id: 5, name: 'Protocol Manual V2', category: 'Manual', status: 'Inactive', quantity: 10, lowStockBatch: 2, location: 'Storage Room A', loggedBy: 'Safia Baig', department: 'admin', dateAdded: '2023-11-20' },
-        { id: 6, name: 'Hand Sanitizer Gel 500ml', category: 'Supplies', status: 'Active', quantity: 50, lowStockBatch: 10, location: 'Storage Room A', loggedBy: 'Jane Tadeo', department: 'sanitation', dateAdded: '2024-02-10' },
-        { id: 7, name: 'Centrifuge Machine X-100', category: 'Equipment', status: 'Active', quantity: 1, lowStockBatch: 1, location: 'Lab Area', loggedBy: 'Lab Technician', department: 'lab', dateAdded: '2024-02-28' },
-        { id: 8, name: 'Paracetamol (Box of 100)', category: 'Medicines', status: 'Active', quantity: 100, lowStockBatch: 20, location: 'Pharmacy Depot', loggedBy: 'Pharmacist', department: 'pharmacy', dateAdded: '2024-03-01' },
-    ];
-};
+import '../../styles/pages/_resources.css';
 
 const Resources = () => {
-    const [resources, setResources] = useState(generateMockResources());
-    const [activeDept, setActiveDept] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [lastActionId, setLastActionId] = useState(null);
-
-    // Modals
+    const [activeTab, setActiveTab] = useState('medical');
+    const [searchQuery, setSearchQuery] = useState('');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [isStockModalOpen, setIsStockModalOpen] = useState(false);
+    const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
 
-    const [selectedResource, setSelectedResource] = useState(null);
-    const [stockAdjustment, setStockAdjustment] = useState({ type: 'add', quantity: 0, reason: '' });
-    const [formData, setFormData] = useState({
-        name: '', category: CATEGORIES[0], department: DEPARTMENTS[0].id,
-        status: 'Active', quantity: 0, lowStockBatch: 0, location: LOCATIONS[0], loggedBy: 'Current User'
-    });
+    // New Advanced States
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [pinnedItems, setPinnedItems] = useState(new Set(['MED-002', 'OFF-101']));
+    const [activeFilters, setActiveFilters] = useState([]);
+    const [notifications, setNotifications] = useState([
+        { id: 1, text: 'Low stock: Surgical Gloves (Storage B)', type: 'warning' },
+        { id: 2, text: 'Maintenance due: Main Generator', type: 'info' }
+    ]);
 
-    // Summary Stats
-    const totalResources = resources.length;
-    const activeItems = resources.filter(r => r.status === 'Active').length;
-    const lowStockItems = resources.filter(r => r.quantity <= r.lowStockBatch).length;
+    // Dashboard Data
+    const stats = [
+        { label: 'Total Items', value: '1,284', icon: Package, type: 'total' },
+        { label: 'Low Stock Items', value: '12', icon: AlertCircle, type: 'low' },
+        { label: 'Pending Requests', value: '5', icon: ClipboardList, type: 'pending' },
+        { label: 'Items Needing Maintenance', value: '3', icon: History, type: 'maint' }
+    ];
 
-    const handleSearch = (e) => setSearchTerm(e.target.value);
+    // Navigation Items
+    const navTabs = [
+        { id: 'medical', label: 'Medical Supplies', icon: Stethoscope },
+        { id: 'office', label: 'Office Supplies', icon: Package },
+        { id: 'infrastructure', label: 'Infrastructure', icon: HardHat },
+        { id: 'equipment', label: 'Equipment', icon: Smartphone },
+        { id: 'requests', label: 'Requests & Approvals', icon: ClipboardList },
+        { id: 'logs', label: 'Maintenance Logs', icon: History },
+        { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    ];
 
-    const filteredResources = resources.filter(r => {
-        const matchesSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            r.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            r.loggedBy.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDept = activeDept === 'all' || r.department === activeDept;
-        return matchesSearch && matchesDept;
-    });
+    // Mock Data for Tables
+    const medicalSupplies = [
+        { id: 'MED-001', name: 'Surgical Masks', quantity: 500, unit: 'Box', supplier: 'HealthCorp', location: 'Storage A', condition: 'New', stockLevel: 'high', expiry: '2025-12-01' },
+        { id: 'MED-002', name: 'Disposable Gloves', quantity: 45, unit: 'Box', supplier: 'MedSupply Co', location: 'Storage B', condition: 'New', stockLevel: 'low', expiry: '2024-05-15' },
+        { id: 'MED-003', name: 'Cotton Swabs', quantity: 10, unit: 'Pack', supplier: 'HealthCorp', location: 'Storage A', condition: 'New', stockLevel: 'critical', expiry: '2025-08-20' },
+        { id: 'MED-004', name: 'First Aid Kit', quantity: 15, unit: 'Unit', supplier: 'SafetyFirst', location: 'Ward 1', condition: 'New', stockLevel: 'high', expiry: 'N/A' },
+    ];
 
-    const openStockModal = (resource, type) => {
-        setSelectedResource(resource);
-        setStockAdjustment({ type, quantity: 0, reason: '' });
-        setIsStockModalOpen(true);
+    const officeSupplies = [
+        { id: 'OFF-101', name: 'A4 Paper Reams', quantity: 120, unit: 'Ream', supplier: 'OfficePro', location: 'Office Supply Rm', condition: 'New', stockLevel: 'high' },
+        { id: 'OFF-102', name: 'Ballpoint Pens', quantity: 12, unit: 'Box', supplier: 'OfficePro', location: 'Admin Desk', condition: 'New', stockLevel: 'low' },
+    ];
+
+    const infrastructureItems = [
+        { id: 'INF-001', item: 'Air Conditioning Unit', location: 'Ward 1', condition: 'Excellent', lastMaint: '2024-01-15', nextMaint: '2024-07-15', responsible: 'Tech Solutions' },
+        { id: 'INF-002', item: 'Main Generator', location: 'Basement', condition: 'Fair', lastMaint: '2023-11-20', nextMaint: '2024-02-20', responsible: 'PowerGuard' },
+        { id: 'INF-003', item: 'Water Filtration System', location: 'Kitchen', condition: 'Excellent', lastMaint: '2023-12-05', nextMaint: '2024-06-05', responsible: 'AquaClear' },
+    ];
+
+    const equipmentItems = [
+        { id: 'EQ-201', name: 'Defibrillator', location: 'Emergency Rm', condition: 'Excellent', serial: 'SN-445522', supplier: 'MedTech', status: 'Operational' },
+        { id: 'EQ-202', name: 'Patient Monitor', location: 'ICU-1', condition: 'Fair', serial: 'SN-998877', supplier: 'VisionCare', status: 'In Use' },
+    ];
+
+    const requests = [
+        { id: 'REQ-452', item: 'Printer Ink', quantity: 2, requestor: 'Dr. Smith', department: 'Pediatrics', status: 'Pending' },
+        { id: 'REQ-451', item: 'Syringes (5ml)', quantity: 100, requestor: 'Nurse Jean', department: 'General Med', status: 'Approved' },
+        { id: 'REQ-450', item: 'Stethoscope', quantity: 1, requestor: 'Dr. Lee', department: 'Cardiology', status: 'Rejected' },
+    ];
+
+    const maintenanceLogs = [
+        { date: '2024-02-10', item: 'Elevator A', action: 'Cable Lubrication', technicin: 'VertiMove', cost: '$450', status: 'Completed' },
+        { date: '2024-02-05', item: 'Centrifuge', action: 'Calibration', technicin: 'LabServices', cost: '$120', status: 'Completed' },
+    ];
+
+    // Helper: Toggle Selection
+    const toggleSelect = (id) => {
+        setSelectedItems(prev =>
+            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+        );
     };
 
-    const handleStockSubmit = () => {
-        const adjustment = stockAdjustment.type === 'add' ? stockAdjustment.quantity : -stockAdjustment.quantity;
-        const newQuantity = Math.max(0, selectedResource.quantity + adjustment);
-
-        setResources(prev => prev.map(r =>
-            r.id === selectedResource.id
-                ? { ...r, quantity: newQuantity, dateUpdated: new Date().toISOString() }
-                : r
-        ));
-
-        setLastActionId(selectedResource.id);
-        setTimeout(() => setLastActionId(null), 2000);
-        setIsStockModalOpen(false);
+    // Helper: Toggle Pin
+    const togglePin = (id) => {
+        setPinnedItems(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
     };
 
-    const saveResource = () => {
-        if (isEditModalOpen) {
-            setResources(prev => prev.map(r => r.id === selectedResource.id ? { ...formData, id: r.id } : r));
-            setIsEditModalOpen(false);
-        } else {
-            const newRes = {
-                ...formData,
-                id: Math.max(...resources.map(r => r.id)) + 1,
-                dateAdded: new Date().toISOString().split('T')[0]
-            };
-            setResources(prev => [newRes, ...prev]);
-            setLastActionId(newRes.id);
-            setTimeout(() => setLastActionId(null), 2000);
-            setIsAddModalOpen(false);
+    const renderAuditPreview = (id) => (
+        <div className="audit-hover-preview">
+            <h5 style={{ fontSize: '0.8rem', marginBottom: '0.5rem' }}>Recent Activity</h5>
+            <div className="preview-item">Item stock updated by Admin (+50)</div>
+            <div className="preview-item">Location changed to Ward 2</div>
+            <div className="preview-item" style={{ border: 'none' }}>Maintenance logged by Tech</div>
+        </div>
+    );
+
+    const renderTable = () => {
+        switch (activeTab) {
+            case 'medical':
+            case 'office':
+                const data = activeTab === 'medical' ? medicalSupplies : officeSupplies;
+                return (
+                    <table className="standard-table">
+                        <thead>
+                            <tr>
+                                <th style={{ width: '40px' }}><Square size={18} style={{ opacity: 0.3 }} /></th>
+                                <th style={{ width: '40px' }}></th>
+                                <th>Item Name</th>
+                                <th>Code/ID</th>
+                                <th>Quantity</th>
+                                <th>Location</th>
+                                <th>Stock Level</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((item) => (
+                                <tr key={item.id} className={`${selectedItems.includes(item.id) ? 'selected-row' : ''}`}>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            className="res-checkbox"
+                                            checked={selectedItems.includes(item.id)}
+                                            onChange={() => toggleSelect(item.id)}
+                                        />
+                                    </td>
+                                    <td>
+                                        <div className={`pin-cell ${pinnedItems.has(item.id) ? 'pinned' : ''}`} onClick={() => togglePin(item.id)}>
+                                            <Pin size={16} fill={pinnedItems.has(item.id) ? 'currentColor' : 'none'} />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                            <div className="item-img-cell"><ImageIcon size={18} /></div>
+                                            <span className="font-bold">{item.name}</span>
+                                        </div>
+                                    </td>
+                                    <td>{item.id}</td>
+                                    <td>{item.quantity} {item.unit}</td>
+                                    <td>{item.location}</td>
+                                    <td>
+                                        <span className={`stock-badge stock-${item.stockLevel}`}>
+                                            {item.stockLevel === 'critical' ? '⚠️ ' : ''}{item.stockLevel}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <div className="history-preview-trigger">
+                                                <button className="btn-icon" title="View Audit Trail"><History size={16} /></button>
+                                                {renderAuditPreview(item.id)}
+                                            </div>
+                                            <button className="btn-icon btn-edit" title="Edit Item Details"><Settings size={16} /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                );
+            case 'infrastructure':
+                return (
+                    <table className="standard-table">
+                        <thead>
+                            <tr>
+                                <th style={{ width: '40px' }}></th>
+                                <th>Item</th>
+                                <th>Location</th>
+                                <th>Condition</th>
+                                <th>Last Maintenance</th>
+                                <th>Next Maintenance</th>
+                                <th>Responsible</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {infrastructureItems.map((item) => (
+                                <tr key={item.id} className="table-row-anim">
+                                    <td><div className={`pin-cell ${pinnedItems.has(item.id) ? 'pinned' : ''}`} onClick={() => togglePin(item.id)}><Pin size={16} fill={pinnedItems.has(item.id) ? 'currentColor' : 'none'} /></div></td>
+                                    <td className="font-bold">{item.item}</td>
+                                    <td>{item.location}</td>
+                                    <td>
+                                        <span className={`cond-${item.condition.toLowerCase()}`} style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                            {item.condition === 'Excellent' ? <CheckCircle2 size={14} /> : <Wrench size={14} />}
+                                            {item.condition}
+                                        </span>
+                                    </td>
+                                    <td>{item.lastMaint}</td>
+                                    <td>{item.nextMaint}</td>
+                                    <td>{item.responsible}</td>
+                                    <td>
+                                        <button className="btn-icon btn-edit" title="Log Maintenance Action"><ClipboardList size={16} /></button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                );
+            case 'equipment':
+                return (
+                    <table className="standard-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Serial No.</th>
+                                <th>Location</th>
+                                <th>Condition</th>
+                                <th>Supplier</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {equipmentItems.map((item) => (
+                                <tr key={item.id} className="table-row-anim">
+                                    <td className="font-bold">{item.name}</td>
+                                    <td>{item.id}</td>
+                                    <td>{item.location}</td>
+                                    <td className={`cond-${item.condition.toLowerCase()}`} style={{ fontWeight: 700 }}>{item.condition}</td>
+                                    <td>{item.supplier}</td>
+                                    <td>
+                                        <span className={`status-badge ${item.status === 'Operational' ? 'completed' : 'pending'}`}>
+                                            {item.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button className="btn-icon" title="View Logs"><History size={16} /></button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                );
+            case 'requests':
+                return (
+                    <table className="standard-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Requestor</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {requests.map((req) => (
+                                <tr key={req.id} className="table-row-anim">
+                                    <td>{req.id}</td>
+                                    <td className="font-bold">{req.item}</td>
+                                    <td>{req.quantity}</td>
+                                    <td>{req.requestor}</td>
+                                    <td>
+                                        <span className={`status-badge ${req.status.toLowerCase()}`}>
+                                            {req.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button className="btn-icon" style={{ color: '#16a34a' }} title="Approve Request"><CheckCircle2 size={16} /></button>
+                                            <button className="btn-icon" style={{ color: '#dc2626' }} title="Reject Request"><Plus size={16} style={{ transform: 'rotate(45deg)' }} /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                );
+            case 'logs':
+                return (
+                    <table className="standard-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Item</th>
+                                <th>Action Taken</th>
+                                <th>Technician</th>
+                                <th>Cost</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {maintenanceLogs.map((log, idx) => (
+                                <tr key={idx} className="table-row-anim">
+                                    <td>{log.date}</td>
+                                    <td className="font-bold">{log.item}</td>
+                                    <td>{log.action}</td>
+                                    <td>{log.technicin}</td>
+                                    <td>{log.cost}</td>
+                                    <td>
+                                        <span className="status-badge completed">{log.status}</span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                );
+            case 'analytics':
+                return (
+                    <div className="analytics-placeholder">
+                        <BarChart3 size={64} />
+                        <h3>Analytics & Reports</h3>
+                        <p>Detailed performance graphs and stock analytics will be available here.</p>
+                        <p style={{ marginTop: '0.5rem', opacity: 0.7 }}>Feature coming soon.</p>
+                    </div>
+                );
+            default:
+                return <div className="analytics-placeholder"><Package size={48} /><p>Section under development.</p></div>;
         }
     };
 
-    const deleteResource = () => {
-        setResources(prev => prev.filter(r => r.id !== selectedResource.id));
-        setIsDeleteModalOpen(false);
-    };
-
     return (
-        <div className="resources-page v2">
-            <div className="consultations-header">
-                <div className="header-title">
-                    <div className="icon-circle">
-                        <Package size={24} />
-                    </div>
-                    <div>
-                        <h1>Resource Management</h1>
-                        <p>Track health office assets across 5 core departments</p>
-                    </div>
-                </div>
-                <button className="btn-new-consultation" onClick={() => setIsAddModalOpen(true)}>
-                    <Plus size={20} />
-                    New Resource
-                </button>
-            </div>
-
-            {/* Compact Summary Metrics */}
-            <div className="compact-metrics">
-                <button
-                    className={`metric-btn blue ${activeDept === 'all' ? 'active' : ''}`}
-                    onClick={() => setActiveDept('all')}
-                >
-                    <div className="metric-icon"><LayoutPanelTop size={18} /></div>
-                    <div className="metric-data">
-                        <span className="metric-value">{totalResources}</span>
-                        <span className="metric-label">Total Resources</span>
-                    </div>
-                </button>
-                <div className="metric-btn green no-click">
-                    <div className="metric-icon"><CheckCircle2 size={18} /></div>
-                    <div className="metric-data">
-                        <span className="metric-value">{activeItems}</span>
-                        <span className="metric-label">Active Items</span>
-                    </div>
-                </div>
-                <div className="metric-btn orange no-click">
-                    <div className="metric-icon"><AlertCircle size={18} /></div>
-                    <div className="metric-data">
-                        <span className="metric-value">{lowStockItems}</span>
-                        <span className="metric-label">Low Stock</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Modern Controls */}
-            <div className="resources-controls-v2">
-                <div className="dept-buttons">
-                    {DEPARTMENTS.map(dept => (
-                        <button
-                            key={dept.id}
-                            className={`dept-bubble ${activeDept === dept.id ? 'active' : ''}`}
-                            onClick={() => setActiveDept(dept.id)}
-                            style={{ '--dept-color': dept.color }}
-                        >
-                            {dept.name}
-                        </button>
+        <div className="resources-page">
+            {/* Header with Notifications */}
+            <div className="res-nav-header">
+                <div className="resources-dashboard">
+                    {stats.map((stat, idx) => (
+                        <div key={idx} className="resource-stat-card">
+                            <div className={`stat-icon ${stat.type}`}>
+                                <stat.icon size={22} />
+                            </div>
+                            <div className="stat-content">
+                                <span className="metric-label">{stat.label}</span>
+                                <h4 className="metric-value">{stat.value}</h4>
+                            </div>
+                        </div>
                     ))}
                 </div>
-                <div className="search-box-modern">
-                    <Search className="search-icon-v2" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search resources by name, category, or staff..."
-                        value={searchTerm}
-                        onChange={handleSearch}
-                        className="search-input-v2"
-                    />
+                <div className="notif-bell" style={{ marginLeft: '2rem' }}>
+                    <Bell size={28} />
+                    <span className="notif-badge">{notifications.length}</span>
                 </div>
             </div>
 
-            {/* Resource Table */}
-            <div className="table-container-v2">
-                <table className="resource-table-v2">
-                    <thead>
-                        <tr>
-                            <th>Resource Name</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th>Availability</th>
-                            <th className="hide-mobile">Location</th>
-                            <th className="hide-mobile">Logged By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredResources.map(res => (
-                            <tr key={res.id} className={lastActionId === res.id ? 'recent-update' : ''}>
-                                <td data-label="Resource Name" className="clickable-name" onClick={() => { setSelectedResource(res); setIsViewModalOpen(true); }}>
-                                    {res.name}
-                                </td>
-                                <td data-label="Category"><span className="badge-category">{res.category}</span></td>
-                                <td data-label="Status">
-                                    <span className={`badge-status ${res.status.toLowerCase()}`}>
-                                        {res.status}
-                                    </span>
-                                </td>
-                                <td data-label="Availability">
-                                    <div className="stock-control-group">
-                                        <button className="stock-btn minus" onClick={() => openStockModal(res, 'remove')}>-</button>
-                                        <span className="stock-display">{res.quantity}</span>
-                                        <button className="stock-btn plus" onClick={() => openStockModal(res, 'add')}>+</button>
-                                    </div>
-                                </td>
-                                <td data-label="Location" className="hide-mobile">{res.location}</td>
-                                <td data-label="Logged By" className="hide-mobile">{res.loggedBy}</td>
-                                <td data-label="Actions">
-                                    <div className="mini-actions">
-                                        <button className="btn-m edit" onClick={() => { setSelectedResource(res); setFormData({ ...res }); setIsEditModalOpen(true); }}><Edit size={14} /></button>
-                                        <button className="btn-m view" onClick={() => { setSelectedResource(res); setIsViewModalOpen(true); }}><Eye size={14} /></button>
-                                        <button className="btn-m del" onClick={() => { setSelectedResource(res); setIsDeleteModalOpen(true); }}><Trash2 size={14} /></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <div className="resources-main-layout">
+                {/* 2. Side Navigation Tabs */}
+                <aside className="resources-sidebar">
+                    {navTabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            className={`nav-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+                            onClick={() => { setActiveTab(tab.id); setSelectedItems([]); }}
+                        >
+                            <tab.icon size={20} />
+                            <span>{tab.label}</span>
+                        </button>
+                    ))}
+                </aside>
 
-            {/* Stock Management Modal */}
-            {isStockModalOpen && selectedResource && (
-                <div className="modal-overlay">
-                    <div className="modal-v2 compact">
-                        <div className="modal-header-v2">
-                            <h3>{stockAdjustment.type === 'add' ? 'Add Stock' : 'Remove Stock'}</h3>
-                            <p>{selectedResource.name}</p>
-                        </div>
-                        <div className="modal-body-v2">
-                            <div className="form-group-v2">
-                                <label>Quantity to {stockAdjustment.type === 'add' ? 'Add' : 'Remove'}</label>
-                                <input
-                                    type="number"
-                                    className="input-v2"
-                                    value={stockAdjustment.quantity}
-                                    onChange={(e) => setStockAdjustment({ ...stockAdjustment, quantity: parseInt(e.target.value) || 0 })}
-                                />
+                {/* 3. Main Content Area */}
+                <main className="resources-tab-content">
+                    {/* Bulk Action Bar */}
+                    {selectedItems.length > 0 && (
+                        <div className="bulk-action-bar">
+                            <div className="bulk-info">
+                                <CheckSquare size={20} />
+                                <span>{selectedItems.length} items selected</span>
                             </div>
-                            <div className="form-group-v2">
-                                <label>Reason / Note (Optional)</label>
-                                <textarea
-                                    className="input-v2"
-                                    placeholder="e.g. Monthly replenishment"
-                                    value={stockAdjustment.reason}
-                                    onChange={(e) => setStockAdjustment({ ...stockAdjustment, reason: e.target.value })}
-                                />
+                            <div className="bulk-btns">
+                                <button className="btn-bulk"><ArrowUpCircle size={16} /> Check-out</button>
+                                <button className="btn-bulk"><ArrowRight size={16} /> Move</button>
+                                <button className="btn-bulk" style={{ background: 'rgba(220, 38, 38, 0.4)' }}><Trash2 size={16} /> Delete</button>
+                                <button className="btn-bulk" onClick={() => setSelectedItems([])}>Cancel</button>
                             </div>
                         </div>
-                        <div className="modal-footer-v2">
-                            <button className="btn-v2 secondary" onClick={() => setIsStockModalOpen(false)}>Cancel</button>
-                            <button className={`btn-v2 primary ${stockAdjustment.type === 'add' ? 'bg-green' : 'bg-red'}`} onClick={handleStockSubmit}>
-                                Confirm Update
+                    )}
+
+                    <div className="tab-header">
+                        <div className="tab-title-group">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <h3>{navTabs.find(t => t.id === activeTab)?.label}</h3>
+                                {pinnedItems.size > 0 && activeTab === 'medical' && (
+                                    <span className="status-badge active" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                        <Star size={12} fill="currentColor" /> {pinnedItems.size} Pinned
+                                    </span>
+                                )}
+                            </div>
+                            <p>Manage and track your {navTabs.find(t => t.id === activeTab)?.label.toLowerCase()}</p>
+                        </div>
+                        <div className="tab-actions">
+                            <button className="btn-action-res secondary" title="Export current view to Excel"><Download size={18} /> Export</button>
+                            <button className="btn-action-res primary" onClick={() => (activeTab === 'requests' ? setIsRequestModalOpen(true) : setIsAddModalOpen(true))}>
+                                <Plus size={18} /> {activeTab === 'requests' ? 'Submit Request' : 'Add Item'}
                             </button>
                         </div>
                     </div>
-                </div>
-            )}
 
-            {/* Add/Edit Modal */}
-            {(isAddModalOpen || isEditModalOpen) && (
-                <div className="modal-overlay">
-                    <div className="modal-v2">
-                        <div className="modal-header-v2">
-                            <h3>{isAddModalOpen ? 'New Resource' : 'Edit Resource'}</h3>
+                    {/* Quick Filter Tags */}
+                    <div className="quick-filters">
+                        <button className="filter-pill active">All Items</button>
+                        <button className="filter-pill"><AlertCircle size={14} /> Low Stock</button>
+                        <button className="filter-pill"><Wrench size={14} /> Needs Maintenance</button>
+                        <button className="filter-pill"><Calendar size={14} /> Expiring Soon</button>
+                        <button className="filter-pill"><Star size={14} /> Favorites</button>
+                    </div>
+
+                    {/* Table Filters */}
+                    <div className="resource-table-controls">
+                        <div className="search-bar-res">
+                            <Search className="search-icon-res" size={18} />
+                            <input
+                                type="text"
+                                placeholder={`Search ${navTabs.find(t => t.id === activeTab)?.label}...`}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
                         </div>
-                        <div className="modal-body-v2 grid">
-                            <div className="form-group-v2 full">
-                                <label>Name</label>
-                                <input className="input-v2" name="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
-                            </div>
-                            <div className="form-group-v2">
-                                <label>Category</label>
-                                <select className="input-v2" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
-                                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-                            </div>
-                            <div className="form-group-v2">
-                                <label>Department</label>
-                                <select className="input-v2" value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })}>
-                                    {DEPARTMENTS.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                                </select>
-                            </div>
-                            <div className="form-group-v2">
-                                <label>Status</label>
-                                <select className="input-v2" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })}>
-                                    {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                            </div>
-                            <div className="form-group-v2">
-                                <label>Initial Quantity</label>
-                                <input type="number" className="input-v2" value={formData.quantity} onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) || 0 })} />
-                            </div>
-                            <div className="form-group-v2">
-                                <label>Location</label>
-                                <select className="input-v2" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })}>
-                                    {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
-                                </select>
-                            </div>
-                            <div className="form-group-v2">
-                                <label>Logged By</label>
-                                <input className="input-v2" disabled value={formData.loggedBy} />
-                            </div>
-                        </div>
-                        <div className="modal-footer-v2">
-                            <button className="btn-v2 secondary" onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }}>Cancel</button>
-                            <button className="btn-v2 primary bg-green" onClick={saveResource}>Save Resource</button>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button className="btn-export" title="Download as CSV"><FileText size={16} /> CSV</button>
+                            <button className="btn-export" title="Download as PDF"><Download size={16} /> PDF</button>
+                            <button className="btn-action-res secondary"><Filter size={18} /> Filter</button>
                         </div>
                     </div>
-                </div>
-            )}
 
-            {/* View Modal */}
-            {isViewModalOpen && selectedResource && (
-                <div className="modal-overlay">
-                    <div className="modal-v2">
-                        <div className="modal-header-v2" style={{ borderBottom: `4px solid ${DEPARTMENTS.find(d => d.id === selectedResource.department)?.color}` }}>
-                            <h3>Resource Details</h3>
-                            <p>Resource ID: RES-{selectedResource.id}</p>
-                        </div>
-                        <div className="modal-body-v2 detail-view">
-                            <div className="detail-row"><span>Name:</span> <strong>{selectedResource.name}</strong></div>
-                            <div className="detail-row"><span>Category:</span> <strong>{selectedResource.category}</strong></div>
-                            <div className="detail-row"><span>Department:</span> <strong>{DEPARTMENTS.find(d => d.id === selectedResource.department)?.name}</strong></div>
-                            <div className="detail-row"><span>Quantity:</span> <strong>{selectedResource.quantity} Units</strong></div>
-                            <div className="detail-row"><span>Status:</span> <strong className={`tag-${selectedResource.status.toLowerCase()}`}>{selectedResource.status}</strong></div>
-                            <div className="detail-row"><span>Location:</span> <strong>{selectedResource.location}</strong></div>
-                            <div className="detail-row"><span>Logged By:</span> <strong>{selectedResource.loggedBy}</strong></div>
-                            <div className="detail-row"><span>Date Added:</span> <strong>{selectedResource.dateAdded}</strong></div>
-                        </div>
-                        <div className="modal-footer-v2">
-                            <button className="btn-v2 secondary" onClick={() => setIsViewModalOpen(false)}>Close</button>
-                        </div>
+                    {/* Dynamic Table Content */}
+                    <div className="standard-table-container">
+                        {renderTable()}
                     </div>
-                </div>
-            )}
+                </main>
+            </div>
 
-            {/* Delete Modal */}
-            {isDeleteModalOpen && selectedResource && (
-                <div className="modal-overlay">
-                    <div className="modal-v2 compact">
-                        <div className="modal-header-v2 bg-red-light">
-                            <AlertCircle size={40} color="#dc2626" />
-                            <h3>Confirm Deletion</h3>
+            {/* Modals remain same as previous step but with standardized styles */}
+            {(isAddModalOpen || isRequestModalOpen) && (
+                <div className="modal-overlay" onClick={() => { setIsAddModalOpen(false); setIsRequestModalOpen(false); }}>
+                    <div className="modal-content modern-modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header-modern">
+                            <div className="modal-icon-bg">
+                                {isAddModalOpen ? <Plus size={24} /> : <ClipboardList size={24} />}
+                            </div>
+                            <h2>{isAddModalOpen ? 'Add New Resource' : 'Submit Resource Request'}</h2>
+                            <p>{isAddModalOpen ? 'Complete the details to add an item to the inventory.' : 'Provide details for the items you need to request.'}</p>
                         </div>
-                        <div className="modal-body-v2 centered">
-                            <p>Are you sure you want to delete <strong>{selectedResource.name}</strong>?</p>
-                            <p className="text-muted small">This action will remove the resource from the database permanently.</p>
+                        <div className="modal-body-scroll">
+                            <div className="form-group">
+                                <label>Item Name <span className="required">*</span></label>
+                                <input type="text" className="form-input" placeholder="e.g. Surgical Masks" />
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group half">
+                                    <label>Quantity</label>
+                                    <input type="number" className="form-input" placeholder="0" />
+                                </div>
+                                <div className="form-group half">
+                                    <label>Location</label>
+                                    <input type="text" className="form-input" placeholder="Storage A / Ward 1" />
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label>Notes</label>
+                                <textarea className="form-input" rows="3" placeholder="Additional information..."></textarea>
+                            </div>
+                            <div className="form-group">
+                                <label>Upload Attachment (Manuals/Receipts)</label>
+                                <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.75rem', padding: '1.5rem', textAlign: 'center', cursor: 'pointer' }}>
+                                    <ImageIcon style={{ opacity: 0.5, marginBottom: '0.5rem' }} />
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Drag and drop files here or click to browse</p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="modal-footer-v2 split">
-                            <button className="btn-v2 secondary full" onClick={() => setIsDeleteModalOpen(false)}>No, Cancel</button>
-                            <button className="btn-v2 primary bg-red full" onClick={deleteResource}>Yes, Delete</button>
+                        <div className="modal-footer-modern">
+                            <button className="btn-cancel-modern" onClick={() => { setIsAddModalOpen(false); setIsRequestModalOpen(false); }}>Cancel</button>
+                            <button className="btn-save-modern" onClick={() => { setIsAddModalOpen(false); setIsRequestModalOpen(false); }}>
+                                {isAddModalOpen ? 'Save Item' : 'Submit Request'}
+                            </button>
                         </div>
                     </div>
                 </div>

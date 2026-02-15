@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Search, Filter, Plus, Calendar, User, Edit, Archive,
     ChevronLeft, ChevronRight, X, Save, FileText, Stethoscope,
@@ -75,8 +75,22 @@ const Consultations = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
     const itemsPerPage = 10;
+    const location = useLocation();
 
     const filterRef = useRef(null);
+
+    // Auto-open modal if navigated from Quick Actions
+    useEffect(() => {
+        if (location.state?.openModal) {
+            // Short delay to ensure transition finishes smoothly
+            const timer = setTimeout(() => {
+                setIsNewConsultationModalOpen(true);
+                // Clear state so it doesn't re-open on refresh
+                window.history.replaceState({}, document.title);
+            }, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [location]);
 
     // Close filters on click outside
     useEffect(() => {
@@ -416,7 +430,7 @@ const Consultations = () => {
 
             {/* Summary & Top Pagination */}
             <div className="table-controls-top">
-                <div className="consultations-summary-compact">
+                <div className="table-summary-compact">
                     Showing <strong>{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, sortedConsultations.length)}</strong> of <strong>{sortedConsultations.length}</strong> consultations
                 </div>
 
@@ -447,8 +461,8 @@ const Consultations = () => {
 
             {/* Table */}
             {currentConsultations.length > 0 ? (
-                <div className="table-container">
-                    <table className="consultations-table">
+                <div className="standard-table-container">
+                    <table className="standard-table">
                         <thead>
                             <tr>
                                 <th className="sortable" onClick={() => requestSort('patientName')}>
@@ -493,7 +507,7 @@ const Consultations = () => {
                                     </td>
                                     <td className="text-dark font-bold">{consultation.doctor}</td>
                                     <td>
-                                        <span className="type-badge">{consultation.reason}</span>
+                                        <span className={`status-badge ${consultation.reason.toLowerCase()}`}>{consultation.reason}</span>
                                     </td>
                                     <td className="notes-cell">{consultation.notes}</td>
                                     <td>

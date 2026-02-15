@@ -293,7 +293,7 @@ const Patients = () => {
 
             {/* Top Pagination & Summary Controls */}
             <div className="table-controls-top">
-                <div className="patients-summary-compact">
+                <div className="table-summary-compact">
                     {sortedPatients.length > 0 ? (
                         <p>Showing <strong>{indexOfFirstItem + 1}-{Math.min(indexOfLastItem, sortedPatients.length)}</strong> of <strong>{sortedPatients.length}</strong> patients</p>
                     ) : (
@@ -326,9 +326,9 @@ const Patients = () => {
                 )}
             </div>
 
-            <div className="table-container shadow-soft">
+            <div className="standard-table-container">
                 {sortedPatients.length > 0 ? (
-                    <table className="patients-table interactive-table">
+                    <table className="standard-table">
                         <thead>
                             <tr>
                                 <th onClick={() => requestSort('id')} className="sortable">

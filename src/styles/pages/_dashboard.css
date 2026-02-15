@@ -19,25 +19,25 @@
 
 .dashboard-header {
     margin-bottom: 2rem;
-    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    background: var(--header-bg);
     padding: 2rem;
     border-radius: 1.25rem;
-    border: 1px solid #86efac;
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 15px rgba(22, 101, 52, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .dashboard-title {
     font-size: 2.25rem;
     font-weight: 800;
-    color: #064e3b;
+    color: var(--header-title-text);
     margin: 0;
     letter-spacing: -0.025em;
 }
 
 .dashboard-subtitle {
-    color: #166534;
+    color: var(--header-subtitle-text);
     font-weight: 500;
     margin-top: 0.5rem;
     font-size: 1.1rem;
@@ -102,8 +102,8 @@
 }
 
 .stat-icon-container {
-    background: #ecfdf5;
-    color: #059669;
+    background: var(--subcard-bg);
+    color: var(--active-sort);
     width: 54px;
     height: 54px;
     border-radius: 50%;
@@ -210,11 +210,11 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: #f9fafb;
+    background: var(--subcard-bg);
     padding: 0.4rem 0.75rem;
     border-radius: 0.5rem;
-    border: 1px solid #e5e7eb;
-    color: #6b7280;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
 }
 
 .filter-select {
@@ -222,7 +222,7 @@
     border: none;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-color);
     cursor: pointer;
     outline: none;
 }
@@ -251,8 +251,8 @@
 }
 
 .tab-btn.active {
-    color: #064e3b;
-    border-bottom-color: #059669;
+    color: var(--header-title-text);
+    border-bottom-color: var(--active-sort);
 }
 
 .alerts-list-panel {
@@ -267,7 +267,7 @@
     padding: 1rem 1.5rem;
     gap: 1.25rem;
     transition: all 0.2s ease;
-    border-bottom: 1px solid #f9fafb;
+    border-bottom: 1px solid var(--border-color);
     animation: alertRowFadeIn 0.4s ease-out backwards;
 }
 
@@ -292,7 +292,7 @@
 }
 
 .alert-row-item:hover {
-    background: #f0fdf4;
+    background: var(--table-row-hover);
     transform: translateX(5px);
 }
 
@@ -336,7 +336,7 @@
 .alert-row-title {
     font-size: 0.95rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-color);
 }
 
 .alert-row-desc {
@@ -363,7 +363,7 @@
     border: none;
     font-size: 0.875rem;
     font-weight: 700;
-    color: #064e3b;
+    color: var(--active-sort);
     cursor: pointer;
     padding: 0;
     display: flex;
@@ -516,7 +516,7 @@
 }
 
 .activity-item:hover {
-    background: #f9fafb;
+    background: var(--table-row-hover);
     transform: translateX(3px);
 }
 

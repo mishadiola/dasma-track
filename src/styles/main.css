@@ -9,12 +9,14 @@
 /* Component Styles */
 @import './components/_button.css';
 @import './components/_navbar.css';
+@import './components/_modal.css';
 
 /* Page Styles */
 @import './pages/_home.css';
 @import './pages/_login.css';
 @import './pages/_signup.css';
 @import './components/_sidebar.css';
+@import './components/_table.css';
 @import './pages/_dashboard.css';
 @import './pages/_patients.css';
 @import './pages/_new-patient.css';

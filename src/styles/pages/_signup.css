@@ -57,15 +57,15 @@
 .signup-page__title {
     font-size: 1.8rem;
     font-weight: 800;
-    color: #0f3d0f;
+    color: var(--header-title-text);
     margin-bottom: 0.25rem;
-    text-shadow: 0 2px 4px var(--card-bg);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .signup-page__subtitle {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #166534;
+    color: var(--header-subtitle-text);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -99,7 +99,7 @@
 .signup-card__title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: #064e3b;
+    color: var(--header-title-text);
     text-align: center;
     margin-bottom: 1.5rem;
     position: relative;
@@ -412,7 +412,7 @@
 }
 
 .login-link {
-    color: #064e3b;
+    color: var(--active-sort);
     font-weight: 700;
     text-decoration: none;
     transition: color 0.2s;
@@ -439,7 +439,8 @@
 }
 
 .login-link:hover {
-    color: #047857;
+    color: var(--active-sort);
+    opacity: 0.8;
 }
 
 /* Animations */

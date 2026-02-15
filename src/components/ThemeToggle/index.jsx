@@ -2,7 +2,7 @@ import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
-const ThemeToggle = () => {
+const ThemeToggle = ({ isCollapsed }) => {
     const { theme, toggleTheme } = useTheme();
 
     return (
@@ -10,16 +10,17 @@ const ThemeToggle = () => {
             className="theme-toggle"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            title={isCollapsed ? `Switch to ${theme === 'light' ? 'dark' : 'light'} mode` : ""}
         >
             {theme === 'light' ? (
                 <>
                     <Moon size={20} />
-                    <span>Dark Mode</span>
+                    {!isCollapsed && <span>Dark Mode</span>}
                 </>
             ) : (
                 <>
                     <Sun size={20} />
-                    <span>Light Mode</span>
+                    {!isCollapsed && <span>Light Mode</span>}
                 </>
             )}
         </button>

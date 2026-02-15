@@ -209,7 +209,7 @@ const Dashboard = () => {
                                 <Plus size={18} />
                                 <span>Add Patient</span>
                             </button>
-                            <button className="action-pill-btn tint-blue" onClick={() => navigate('/consultations')}>
+                            <button className="action-pill-btn tint-blue" onClick={() => navigate('/consultations', { state: { openModal: true } })}>
                                 <Stethoscope size={18} />
                                 <span>New Consultation</span>
                             </button>
