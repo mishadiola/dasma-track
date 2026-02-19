@@ -1,0 +1,75 @@
+/* Component: Status Badges */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    transition: all 0.2s ease;
+}
+
+/* Colors based on requirements */
+.badge-critical {
+    /* Red */
+    background-color: var(--status-critical-bg, #fee2e2);
+    color: var(--status-critical-text, #991b1b);
+}
+
+.badge-warning {
+    /* Orange */
+    background-color: var(--status-warning-bg, #fef3c7);
+    color: var(--status-warning-text, #92400e);
+}
+
+.badge-healthy {
+    /* Green */
+    background-color: var(--status-success-bg, #dcfce7);
+    color: var(--status-success-text, #166534);
+}
+
+.badge-info {
+    /* Blue */
+    background-color: #eff6ff;
+    color: #1e40af;
+}
+
+/* Dark Theme Overrides */
+[data-theme='dark'] .badge-critical {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #f87171;
+}
+
+[data-theme='dark'] .badge-warning {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+[data-theme='dark'] .badge-healthy {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+[data-theme='dark'] .badge-info {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+/* Alert Row Background Tints */
+.row-alert-critical {
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.row-alert-warning {
+    background-color: rgba(245, 158, 11, 0.05);
+}
+
+[data-theme='dark'] .row-alert-critical {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+[data-theme='dark'] .row-alert-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+}

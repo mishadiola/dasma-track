@@ -115,20 +115,28 @@
 }
 
 .sidebar__link:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.08);
     color: #fff;
-    transform: translateX(3px);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar.collapsed .sidebar__link:hover {
     transform: none;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .sidebar__link.active {
     background-color: var(--sidebar-bg-active);
     color: var(--sidebar-text-active);
     font-weight: 700;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    border-left: 4px solid var(--active-sort);
+}
+
+.sidebar.collapsed .sidebar__link.active {
+    border-left: none;
+    border-right: 4px solid var(--active-sort);
 }
 
 .sidebar__footer {

@@ -23,7 +23,6 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         { path: '/consultations', label: 'Consultations', icon: Stethoscope },
         { path: '/resources', label: 'Resources', icon: Package },
         { path: '/reports', label: 'Reports', icon: FileText },
-        { path: '/analytics', label: 'Analytics', icon: BarChart2 },
         { path: '/settings', label: 'Settings', icon: Settings },
     ];
 

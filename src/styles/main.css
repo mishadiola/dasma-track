@@ -10,6 +10,8 @@
 @import './components/_button.css';
 @import './components/_navbar.css';
 @import './components/_modal.css';
+@import './components/_badges.css';
+@import './components/_forms.css';
 
 /* Page Styles */
 @import './pages/_home.css';
@@ -23,3 +25,5 @@
 @import './pages/_patient-profile.css';
 @import './pages/_consultations.css';
 @import './pages/_resources.css';
+@import './pages/_reports.css';
+@import './pages/_settings.css';

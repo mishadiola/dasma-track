@@ -1,0 +1,72 @@
+/* Component: Modern Form Elements */
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 0.875rem;
+    overflow: hidden;
+    background: var(--input-bg);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s border-color, 0.2s box-shadow;
+    height: 42px;
+    /* Standardized height */
+    width: fit-content;
+}
+
+.quantity-selector:focus-within {
+    border-color: var(--active-sort);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.qs-btn {
+    background: var(--subcard-bg);
+    border: none;
+    color: var(--text-color);
+    width: 40px;
+    height: 100%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.qs-btn:hover {
+    background: var(--table-row-hover);
+    color: var(--active-sort);
+}
+
+.qs-btn:active {
+    transform: scale(0.9);
+}
+
+.qs-input {
+    border: none !important;
+    border-left: 1px solid var(--border-color) !important;
+    border-right: 1px solid var(--border-color) !important;
+    border-radius: 0 !important;
+    text-align: center;
+    width: 60px !important;
+    padding: 0 0.5rem !important;
+    margin: 0 !important;
+    background: transparent !important;
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+}
+
+/* Remove Arrows/Spinners */
+.qs-input::-webkit-outer-spin-button,
+.qs-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.qs-input[type=number] {
+    -moz-appearance: textfield;
+    appearance: none;
+}

@@ -12,7 +12,6 @@ import PatientProfile from './pages/PatientProfile';
 import Consultations from './pages/Consultations';
 import Resources from './pages/Resources';
 import Reports from './pages/Reports';
-import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import DashboardLayout from './layouts/DashboardLayout';
 import ScrollToTop from './components/ScrollToTop';
@@ -78,14 +77,6 @@ function App() {
             element={
               <DashboardLayout>
                 <Reports />
-              </DashboardLayout>
-            }
-          />
-          <Route
-            path="/analytics"
-            element={
-              <DashboardLayout>
-                <Analytics />
               </DashboardLayout>
             }
           />
